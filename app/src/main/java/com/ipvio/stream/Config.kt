@@ -25,12 +25,26 @@ object Config {
         private set
     var omdbOwn by androidx.compose.runtime.mutableStateOf(false)
         private set
+    // IA opcional (recomendações). Chave/endpoint/modelo compatíveis com a API OpenAI (chat/completions).
+    @Volatile var aiKey: String = ""
+        private set
+    @Volatile var aiBase: String = ""
+        private set
+    @Volatile var aiModel: String = ""
+        private set
+    var aiOwn by androidx.compose.runtime.mutableStateOf(false)
+        private set
     private var inited = false
 
     private fun prefs(c: Context) = c.applicationContext.getSharedPreferences("ipvio_keys", Context.MODE_PRIVATE)
 
     /** Nur Buchstaben und Ziffern (ein Schlüssel darf nie Sonderzeichen in Adressen einschleusen). */
     fun clean(s: String): String = s.trim().filter { it.isLetterOrDigit() }.take(64)
+    // A chave de IA pode ter hífen/underscore/ponto e é longa; o endpoint é uma URL; o modelo tem letras, dígitos, - _ . :
+    fun cleanAiKey(s: String): String = s.trim().filter { it.isLetterOrDigit() || it == '-' || it == '_' || it == '.' }.take(200)
+    fun cleanAiBase(s: String): String = s.trim().filter { it.isLetterOrDigit() || it in "-_.:/" }.take(200)
+    fun cleanAiModel(s: String): String = s.trim().filter { it.isLetterOrDigit() || it in "-_.:" }.take(64)
+    fun aiEnabled() = aiKey.isNotBlank()
 
     @Synchronized
     fun init(c: Context) {
@@ -41,7 +55,21 @@ object Config {
         val o = clean(p.getString("omdb", "").orEmpty())
         if (t.isNotEmpty()) { TMDB_KEY = t; tmdbOwn = true }
         if (o.isNotEmpty()) { OMDB_KEY = o; omdbOwn = true }
+        aiKey = cleanAiKey(p.getString("ai_key", "").orEmpty())
+        aiBase = cleanAiBase(p.getString("ai_base", "").orEmpty())
+        aiModel = cleanAiModel(p.getString("ai_model", "").orEmpty())
+        aiOwn = aiKey.isNotEmpty()
     }
+
+    /** Salva a configuração da IA (chave, endpoint, modelo). */
+    fun saveAi(c: Context, key: String, base: String, model: String) {
+        aiKey = cleanAiKey(key); aiBase = cleanAiBase(base); aiModel = cleanAiModel(model)
+        prefs(c).edit().putString("ai_key", aiKey).putString("ai_base", aiBase).putString("ai_model", aiModel).apply()
+        aiOwn = aiKey.isNotEmpty(); inited = true
+    }
+    fun ownAiKey(c: Context): String = cleanAiKey(prefs(c).getString("ai_key", "").orEmpty())
+    fun ownAiBase(c: Context): String = cleanAiBase(prefs(c).getString("ai_base", "").orEmpty())
+    fun ownAiModel(c: Context): String = cleanAiModel(prefs(c).getString("ai_model", "").orEmpty())
 
     /** Speichert die eingetragenen Schlüssel; leer = Schlüssel entfernen (dann gilt ggf. wieder secrets.properties). */
     fun save(c: Context, tmdb: String, omdb: String) {

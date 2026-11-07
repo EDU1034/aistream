@@ -404,11 +404,15 @@ private fun AppContent() {
                 onGoTab = { if (it != MenuLogic.EPG) cats = null; goTab(it) }
             ) }
             adding -> Box(Modifier.fillMaxSize().screenEnter()) { AddPlaylistScreen { adding = false } }
+            AppNav.openAi -> Box(Modifier.fillMaxSize().screenEnter()) {
+                AiScreen(all, onOpen = { AppNav.openAi = false; open(it) }, onClose = { AppNav.openAi = false })
+            }
             tab == 4 && all.isNotEmpty() -> Box(Modifier.fillMaxSize().screenEnter()) { SearchScreen(
                 tab = tab, state = states[4],
                 onOpen = open,
                 onBrowse = { browse = BrowseState(it) },
-                onTab = { goTab(it) }
+                onTab = { goTab(it) },
+                onAi = { AppNav.openAi = true }
             ) }
             else -> Box(Modifier.fillMaxSize().screenEnter(tab)) { HomeScreen(
                 tab = tab, onTab = { goTab(it) }, states = states,

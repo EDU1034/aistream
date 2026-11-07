@@ -1101,6 +1101,9 @@ private fun ApiKeysPage(ctx: Context) {
     var omdb by remember { mutableStateOf(Config.ownOmdb(ctx)) }
     var tmdbStatus by remember { mutableStateOf("") }
     var omdbStatus by remember { mutableStateOf("") }
+    var aiKey by remember { mutableStateOf(Config.ownAiKey(ctx)) }
+    var aiBase by remember { mutableStateOf(Config.ownAiBase(ctx)) }
+    var aiModel by remember { mutableStateOf(Config.ownAiModel(ctx)) }
     var busy by remember { mutableStateOf(false) }
     Hint("Die App enthält keine eigenen Schlüssel. Mit deinen eigenen, kostenlosen Schlüsseln zeigt sie Poster, Beschreibungen, Besetzung, Trailer, automatische Genres sowie IMDb- und Rotten-Tomatoes-Wertungen. Ohne Schlüssel übernimmt sie Beschreibung, Cover und Bewertung von deinem Anbieter (bei Xtream-Zugängen).")
 
@@ -1114,20 +1117,29 @@ private fun ApiKeysPage(ctx: Context) {
     Hint("Kostenlos unter omdbapi.com > API Key (FREE). Danach den Aktivierungslink in der E-Mail anklicken, sonst funktioniert der Schlüssel nicht. Geht auch ohne TMDB-Schlüssel.")
     if (omdbStatus.isNotBlank()) Text(omdbStatus, color = if (omdbStatus == "Schlüssel gültig") Accent2 else Muted, fontSize = 16.sp)
 
+    SectionTitle("IA (recomendações)")
+    Field(aiKey, { aiKey = it }, "Chave de IA (API compatível com OpenAI) — opcional", password = true)
+    Hint("Opcional. Com uma chave (ex.: OpenAI), o modo IA recomenda títulos da sua playlist por conversa. Sem chave, o modo IA usa o TMDB. A chave fica só neste aparelho.")
+    Field(aiBase, { aiBase = it }, "Endpoint (padrão: https://api.openai.com/v1)")
+    Field(aiModel, { aiModel = it }, "Modelo (padrão: gpt-4o-mini)")
+
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         PillButton(if (busy) "Bitte warten …" else "Speichern und prüfen", light = true, icon = AIcon.Check) {
             if (busy) return@PillButton
             busy = true
             Config.save(ctx, tmdb, omdb)
+            Config.saveAi(ctx, aiKey, aiBase, aiModel)
             tmdb = Config.ownTmdb(ctx); omdb = Config.ownOmdb(ctx)
+            aiKey = Config.ownAiKey(ctx); aiBase = Config.ownAiBase(ctx); aiModel = Config.ownAiModel(ctx)
             scope.launch {
                 tmdbStatus = if (tmdb.isEmpty()) "" else KeyCheck.tmdb(tmdb) ?: "Schlüssel gültig"
                 omdbStatus = if (omdb.isEmpty()) "" else KeyCheck.omdb(omdb) ?: "Schlüssel gültig"
                 busy = false
             }
         }
-        if (tmdb.isNotEmpty() || omdb.isNotEmpty()) ConfirmPill("Schlüssel entfernen") {
+        if (tmdb.isNotEmpty() || omdb.isNotEmpty() || aiKey.isNotEmpty()) ConfirmPill("Schlüssel entfernen") {
             tmdb = ""; omdb = ""; tmdbStatus = ""; omdbStatus = ""; Config.save(ctx, "", "")
+            aiKey = ""; aiBase = ""; aiModel = ""; Config.saveAi(ctx, "", "", "")
         }
     }
     Hint("Die Schlüssel bleiben nur auf diesem Gerät. Nach dem Eintragen die App einmal neu starten, damit alle Bereiche die Infos laden. Intro- und Abspann-Zeiten kommen von TheIntroDB und brauchen keinen Schlüssel.")
@@ -1135,7 +1147,7 @@ private fun ApiKeysPage(ctx: Context) {
 
 @Composable
 private fun AboutPage(ctx: Context) {
-    Text("IPVIO Stream · Version " + appVersion(ctx), color = Color.White, fontSize = 18.sp)
+    Text("AI Stream TV · Version " + appVersion(ctx), color = Color.White, fontSize = 18.sp)
     Hint("IPVIO Stream ist ein Player und liefert selbst keine Inhalte. Nutze nur Quellen, für die du eine Berechtigung hast.")
     Hint("Dieses Produkt verwendet die TMDB-API, wird aber nicht von TMDB unterstützt oder zertifiziert. Wertungen: OMDb. Intro-Zeiten: TheIntroDB.")
     Hint("IPVIO Stream ist freie Software unter der GNU General Public License v3 (GPL-3.0). Verwendete Bibliotheken: AndroidX/Jetpack Compose, Media3 (Apache 2.0), OkHttp, Coil (Apache 2.0), Jellyfin FFmpeg-Decoder (GPL-3.0), Schriften Outfit und Inter (SIL Open Font License).")

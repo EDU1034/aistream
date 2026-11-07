@@ -76,6 +76,8 @@ object AppNav {
     @Volatile var openGuide = false
     /** Mosaico multiview aberto (Live TV > „Mosaico“). */
     var openMosaic by androidx.compose.runtime.mutableStateOf(false)
+    /** Tela de IA (recomendações) aberta. */
+    var openAi by androidx.compose.runtime.mutableStateOf(false)
 }
 
 object RowStates {

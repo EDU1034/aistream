@@ -51,7 +51,7 @@ private object SearchCache {
 @Composable
 fun SearchScreen(
     tab: Int, state: LazyListState,
-    onOpen: (Item) -> Unit, onBrowse: (BrowseReq) -> Unit, onTab: (Int) -> Unit
+    onOpen: (Item) -> Unit, onBrowse: (BrowseReq) -> Unit, onTab: (Int) -> Unit, onAi: () -> Unit = {}
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -118,6 +118,11 @@ fun SearchScreen(
         Box(Modifier.fillMaxSize().sidebarPad()) {
             LazyColumn(Modifier.fillMaxSize(), state = state, contentPadding = PaddingValues(bottom = 48.dp)) {
                 item { Spacer(Modifier.height(24.dp)) }
+                item {
+                    Row(Modifier.padding(horizontal = 40.dp, vertical = 4.dp)) {
+                        PillButton(Lang.tr("IA – o que assistir"), light = true) { onAi() }
+                    }
+                }
                 item {
                     Box(
                         Modifier.padding(horizontal = DS.PageX, vertical = 8.dp).onPreviewKeyEvent { e ->
