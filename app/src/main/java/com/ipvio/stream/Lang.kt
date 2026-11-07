@@ -24,7 +24,7 @@ object Lang {
         loaded = true
         I18nCore.load(DictA, DictB, DictC, DictD, DictE, DictF, DictG, DictH, DictI, DictJ)
         I18nCore.loadColumn(I18nCore.CODES.indexOf("nl"), DictNl1, DictNl2, DictNl3, DictNl4, DictNl5)
-        I18nCore.loadColumn(I18nCore.CODES.indexOf("pt"), DictPt1)
+        I18nCore.loadColumn(I18nCore.CODES.indexOf("pt"), DictPt1, DictPt2)
     }
 
     /** Index in I18nCore.CODES. Liest den Zustand, damit Texte beim Umstellen neu gezeichnet werden. */

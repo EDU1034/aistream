@@ -289,11 +289,14 @@ fun HomeScreen(
 
     LaunchedEffect(candidates) {
         ready.clear()
+        val fallback = ArrayList<Item>()
         for (c in candidates) {
             val m = MetaRepo.basic(ctx, c)
-            if (m?.backdrop != null) ready.add(c)
+            if (m?.backdrop != null) ready.add(c) else if (c.logo != null) fallback.add(c)
             if (ready.size >= 6) break
         }
+        // Sem backdrops do TMDB (ex.: sem chave): usa a capa da própria playlist para o banner aparecer.
+        if (ready.isEmpty()) ready.addAll(fallback.take(6))
     }
     // Über die Seitenleiste von einem anderen Bildschirm (z. B. Suche) hierher gewechselt: Inhalt fokussieren
     LaunchedEffect(Unit) {
@@ -761,7 +764,7 @@ private fun Hero(
             Box(Modifier.fillMaxSize().graphicsLayer {
                 translationY = if (Look.motion == 0) 0f else scrollY() * 0.4f
             }) {
-                m?.backdrop?.let { AsyncImage(it, null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop, alignment = Alignment.TopEnd) }
+                (m?.backdrop ?: c.logo)?.let { AsyncImage(it, null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop, alignment = Alignment.TopEnd) }
             }
         }
         // Verläufe: links und unten in den Hintergrund, oben dezent hinter der Kopfzeile; zusätzlich eine weiche Vignette
