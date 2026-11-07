@@ -270,4 +270,5 @@ Uhrzeit im Bild¦Relógio na tela
 Technik-Info¦Informações técnicas
 Sleep-Timer¦Timer de sono
 Letzter Kanal¦Último canal
+Für diesen Sender gibt es kein Programm.¦Não há programação para este canal.
 """

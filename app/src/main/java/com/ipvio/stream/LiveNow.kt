@@ -48,13 +48,29 @@ fun LiveBackdrop(ch: Item?, modifier: Modifier = Modifier) {
         Crossfade(ch, animationSpec = tween(if (Look.motion == 0) 0 else 700), label = "liveBg") { c ->
             if (c != null) {
                 val col = colorFor(c)
-                Box(Modifier.fillMaxSize().background(Brush.radialGradient(listOf(col.copy(alpha = 0.55f), Color.Transparent), radius = 1400f, center = androidx.compose.ui.geometry.Offset(1500f, 380f))))
-                Box(Modifier.fillMaxSize().background(Brush.radialGradient(listOf(lerp(col, Color.White, 0.2f).copy(alpha = 0.22f), Color.Transparent), radius = 900f, center = androidx.compose.ui.geometry.Offset(1900f, 900f))))
-                if (c.logo != null) AsyncImage(
-                    c.logo, null,
-                    Modifier.align(Alignment.TopEnd).padding(top = dpx(60), end = dpx(80)).size(dpx(360)).graphicsLayer { alpha = 0.12f },
-                    contentScale = ContentScale.Fit
-                )
+                // Imagem do TMDB do programa atual; sem ela, volta à cor e ao logo do canal.
+                val backdrop by produceState<String?>(null, c.id) {
+                    value = runCatching {
+                        val nowT = Epg.current(Epg.now(c))?.title ?: c.title
+                        MetaRepo.backdropForTitle(nowT)
+                    }.getOrNull()
+                }
+                if (backdrop != null) {
+                    AsyncImage(
+                        backdrop, null,
+                        Modifier.fillMaxSize().graphicsLayer { alpha = 0.9f },
+                        contentScale = ContentScale.Crop,
+                        alignment = Alignment.TopCenter,
+                    )
+                } else {
+                    Box(Modifier.fillMaxSize().background(Brush.radialGradient(listOf(col.copy(alpha = 0.55f), Color.Transparent), radius = 1400f, center = androidx.compose.ui.geometry.Offset(1500f, 380f))))
+                    Box(Modifier.fillMaxSize().background(Brush.radialGradient(listOf(lerp(col, Color.White, 0.2f).copy(alpha = 0.22f), Color.Transparent), radius = 900f, center = androidx.compose.ui.geometry.Offset(1900f, 900f))))
+                    if (c.logo != null) AsyncImage(
+                        c.logo, null,
+                        Modifier.align(Alignment.TopEnd).padding(top = dpx(60), end = dpx(80)).size(dpx(360)).graphicsLayer { alpha = 0.12f },
+                        contentScale = ContentScale.Fit
+                    )
+                }
             }
         }
         Box(Modifier.fillMaxSize().background(Brush.horizontalGradient(0f to Bg, 0.3f to Bg.copy(alpha = .9f), 0.55f to Bg.copy(alpha = .35f), 1f to Bg.copy(alpha = .15f))))

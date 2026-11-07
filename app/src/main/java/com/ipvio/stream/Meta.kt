@@ -321,6 +321,35 @@ object MetaRepo {
         return try { JSONObject(body).getJSONArray("results") } catch (e: Exception) { null }
     }
 
+    // Backdrop do TMDB a partir de um título livre (ex.: nome do programa no EPG), para o painel ao vivo.
+    private val titleBackdrop = ConcurrentHashMap<String, String>()
+    private val titleBackdropMiss = ConcurrentHashMap<String, Long>()
+    suspend fun backdropForTitle(title: String): String? {
+        if (!enabled()) return null
+        val q0 = MatchLogic.searchTitle(title).trim()
+        if (q0.length < 2) return null
+        val key = q0.lowercase()
+        titleBackdrop[key]?.let { return it }
+        titleBackdropMiss[key]?.let { if (System.currentTimeMillis() - it < 6 * 3600_000L) return null }
+        val q = URLEncoder.encode(q0, "UTF-8")
+        val body = get("https://api.themoviedb.org/3/search/multi?api_key=${Config.TMDB_KEY}&language=${Lang.tmdb()}&query=$q")
+            ?: return null
+        val url = try {
+            val arr = JSONObject(body).getJSONArray("results")
+            var best: String? = null
+            var bestVotes = -1
+            for (x in 0 until arr.length()) {
+                val o = arr.getJSONObject(x)
+                val bp = o.str("backdrop_path") ?: continue
+                val votes = o.optInt("vote_count")
+                if (votes > bestVotes) { bestVotes = votes; best = IMG + "w1280" + bp }
+            }
+            best
+        } catch (e: Exception) { null }
+        if (url != null) titleBackdrop[key] = url else titleBackdropMiss[key] = System.currentTimeMillis()
+        return url
+    }
+
     private fun candidates(r: org.json.JSONArray, tv: Boolean): List<MatchLogic.Candidate> =
         (0 until r.length()).map { x ->
             val o = r.getJSONObject(x)
