@@ -87,7 +87,7 @@ fun LiveTab(liveAll: List<Item>, groupsAll: Map<String, List<Item>>, favsAll: Li
     // Reihenfolge: Favoriten, eigene Senderlisten, „Neue Senderliste“, alle Sender, Kategorien
     // Aufnahmen (Runde 20): eigene Kategorie, sobald es welche gibt
     val recs = remember(Recorder.active.size, sel == "REC") { Recorder.list(ctx).map { Recorder.itemOf(it) } }
-    val names = (if (PlaylistStore.lists.size > 1) listOf("PL") else emptyList()) + listOf("GUIDE", FAV_CAT) + (if (recs.isNotEmpty()) listOf("REC") else emptyList()) + myLists.map { ChannelListLogic.key(it) } + listOf("NEW", "ALL") + favCats + groups.keys.filter { it !in favCats }
+    val names = (if (PlaylistStore.lists.size > 1) listOf("PL") else emptyList()) + listOf("GUIDE", "MOSAIC", FAV_CAT) + (if (recs.isNotEmpty()) listOf("REC") else emptyList()) + myLists.map { ChannelListLogic.key(it) } + listOf("NEW", "ALL") + favCats + groups.keys.filter { it !in favCats }
     val curList = ChannelLists.byKey(sel)
     val list = when {
         sel == FAV_CAT -> favs
@@ -148,6 +148,13 @@ fun LiveTab(liveAll: List<Item>, groupsAll: Map<String, List<Item>>, favsAll: Li
                             val src = list.ifEmpty { live }
                             val ch = History.ids.firstNotNullOfOrNull { id -> src.firstOrNull { it.id == id } } ?: src.firstOrNull()
                             if (ch != null) { ZapContext.list = src; ZapContext.key = sel; AppNav.openGuide = true; onOpen(ch) }
+                        }
+                        return@itemsIndexed
+                    }
+                    if (n == "MOSAIC") {
+                        CatRow("Mosaik", -1, false, Modifier, onFocus = {}, onRight = { runCatching { firstChan.requestFocus() } }, onFav = {}, icon = AIcon.Grid) {
+                            MosaicContext.list = list.ifEmpty { live }
+                            AppNav.openMosaic = true
                         }
                         return@itemsIndexed
                     }

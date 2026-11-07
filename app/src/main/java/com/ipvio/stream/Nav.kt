@@ -74,6 +74,8 @@ object AppNav {
     @Volatile var focusTab = -1
     /** Beim nächsten Start des Players gleich den TV-Guide öffnen (Live TV > „TV-Guide“). */
     @Volatile var openGuide = false
+    /** Mosaico multiview aberto (Live TV > „Mosaico“). */
+    var openMosaic by androidx.compose.runtime.mutableStateOf(false)
 }
 
 object RowStates {

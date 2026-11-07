@@ -271,4 +271,6 @@ Technik-Info¦Informações técnicas
 Sleep-Timer¦Timer de sono
 Letzter Kanal¦Último canal
 Für diesen Sender gibt es kein Programm.¦Não há programação para este canal.
+Mosaik¦Mosaico
+Größe: Menü · Vollbild: OK · Zurück: schließen¦Tamanho: Menu · Tela cheia: OK · Voltar: fechar
 """

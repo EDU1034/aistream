@@ -373,6 +373,14 @@ private fun AppContent() {
                     }
                 }
             }
+            // Mosaico multiview: grade de canais ao vivo tocando juntos (Live TV > „Mosaico“)
+            AppNav.openMosaic -> Box(Modifier.fillMaxSize()) {
+                MosaicScreen(
+                    MosaicContext.list.ifEmpty { liveAll },
+                    onOpen = { AppNav.openMosaic = false; open(it) },
+                    onClose = { AppNav.openMosaic = false },
+                )
+            }
             // Runde 17: jeder Bildschirm blendet weich ein (screenEnter); der Player bewusst ohne Effekt
             personTop != null -> key(personTop.id) { Box(Modifier.fillMaxSize().screenEnter()) { PersonScreen(personTop, all, onOpen = { pushTop(it) }, onBack = { popTop() }) } }
             d != null -> key(d.id) { Box(Modifier.fillMaxSize().screenEnter()) {
