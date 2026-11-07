@@ -104,8 +104,8 @@ internal fun SecondStream(item: Item, split: Boolean, audioOn: Boolean, modifier
 
 /** Gespeicherte Einstellungen für den zweiten Stream: Anordnung, Fenstergröße und Ecke (Bild-in-Bild), Ton. */
 object DualPrefs {
-    val SIZES = listOf(220, 300, 400, 520)
-    val SIZE_NAMES = listOf("Klein", "Mittel", "Groß", "Sehr groß")
+    val SIZES = listOf(240, 340, 460, 600, 760)
+    val SIZE_NAMES = listOf("Klein", "Mittel", "Groß", "Sehr groß", "Riesig")
     val CORNER_NAMES = listOf("Unten rechts", "Unten links", "Oben rechts", "Oben links")
     val ARRANGE_NAMES = listOf("Bild-in-Bild", "Geteilt")
 

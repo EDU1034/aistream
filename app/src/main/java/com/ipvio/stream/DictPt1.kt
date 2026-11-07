@@ -244,4 +244,30 @@ Hintergrund¦Fundo
 Rand¦Borda
 OK = nächster Wert. Die Vorschau zeigt das Ergebnis.¦OK = próximo valor. A prévia mostra o resultado.
 Videoqualität¦Qualidade de vídeo
+Zweiter Stream¦Segundo stream
+Anordnung¦Disposição
+Geteilt¦Dividido
+Bild-in-Bild¦Picture-in-picture
+Ton von¦Som de
+Hauptstream¦Stream principal
+Zweiter Stream¦Segundo stream
+Fenstergröße¦Tamanho da janela
+Position¦Posição
+Streams tauschen¦Trocar os streams
+Sehr groß¦Muito grande
+Riesig¦Enorme
+Unten rechts¦Embaixo à direita
+Unten links¦Embaixo à esquerda
+Oben rechts¦Em cima à direita
+Oben links¦Em cima à esquerda
+Zweiter Stream nicht abspielbar¦Segundo stream não reproduzível
+Sprungweite¦Tamanho do salto
+Untertitel-Stil¦Estilo das legendas
+Wiedergabe-Tempo¦Velocidade
+Nächste Folge automatisch¦Próximo episódio automático
+Endzeit anzeigen¦Mostrar hora de término
+Uhrzeit im Bild¦Relógio na tela
+Technik-Info¦Informações técnicas
+Sleep-Timer¦Timer de sono
+Letzter Kanal¦Último canal
 """
