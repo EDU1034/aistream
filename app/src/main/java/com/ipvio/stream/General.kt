@@ -57,6 +57,9 @@ object General {
     var cardArt by mutableIntStateOf(0)
     /** Wechselzeit des Start-Banners in Sekunden, 0 = nicht automatisch wechseln */
     var heroSec by mutableIntStateOf(9)
+    /** Stil des Live-Infopanels: 0 = Kinematisch, 1 = Kompakt, 2 = Glaskarte. */
+    var livePanel by mutableIntStateOf(0)
+    val LIVE_PANEL_NAMES = listOf("Kinematisch", "Kompakt", "Glaskarte")
 
     fun plan() = UpdatePlan(refreshMode, refreshInterval, refreshHour, refreshMinute, refreshDow)
     fun zone(): java.util.TimeZone = SettingsLogic.zoneOf(tzId)
@@ -127,6 +130,7 @@ object General {
         kinoPerRow = p.getInt("kino_per_row", 0).let { if (it == 0) 0 else it.coerceIn(3, 14) }
         cardArt = p.getInt("card_art", 0).coerceIn(0, 1)
         previewStyle = p.getInt("preview_style", 0).coerceIn(0, 1)
+        livePanel = p.getInt("live_panel", 0).coerceIn(0, LIVE_PANEL_NAMES.lastIndex)
         Parental.init(c)
         LangFilter.init(c)
         PlayerLocale.locale = Lang.locale()
@@ -157,6 +161,7 @@ object General {
         prefs(c).edit().putInt("card_size", cardSize).putInt("card_art", cardArt).apply()
     }
     fun setPreviewStyle(c: Context, v: Int) { previewStyle = v.coerceIn(0, 1); prefs(c).edit().putInt("preview_style", previewStyle).apply() }
+    fun setLivePanel(c: Context, v: Int) { livePanel = v.coerceIn(0, LIVE_PANEL_NAMES.lastIndex); prefs(c).edit().putInt("live_panel", livePanel).apply() }
     fun setHeroSec(c: Context, v: Int) { heroSec = v.coerceIn(0, 60); prefs(c).edit().putInt("hero_sec", heroSec).apply() }
     fun markRefreshed(c: Context) { lastRefresh = System.currentTimeMillis(); prefs(c).edit().putLong("last_refresh", lastRefresh).apply() }
 

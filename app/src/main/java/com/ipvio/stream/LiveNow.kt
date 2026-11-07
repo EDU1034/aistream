@@ -85,16 +85,25 @@ fun LiveNowPanel(ch: Item?, modifier: Modifier = Modifier) {
     Crossfade(ch, animationSpec = tween(if (Look.motion == 0) 0 else 400), label = "liveNow", modifier = modifier) { c ->
         val epg by produceState(emptyList<EpgEntry>(), c.id) { value = Epg.now(c) }
         val nowE = Epg.current(epg)
-        val next = if (nowE != null) epg.filter { it.start >= nowE.end }.take(2) else epg.take(2)
-        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(dpx(18))) {
+        // tema do painel: 0 = Cinemático, 1 = Compacto, 2 = Card de vidro
+        val style = General.livePanel
+        val titleSize = if (style == 1) 46 else 68
+        val showDesc = style != 1
+        val nextN = if (style == 1) 1 else 2
+        val next = if (nowE != null) epg.filter { it.start >= nowE.end }.take(nextN) else epg.take(nextN)
+        val colMod = if (style == 2)
+            Modifier.fillMaxWidth().clip(RoundedCornerShape(dpx(26)))
+                .background(Color(0x4D0E1016)).border(1.dp, Color(0x26FFFFFF), RoundedCornerShape(dpx(26))).padding(dpx(30))
+        else Modifier.fillMaxWidth()
+        Column(colMod, verticalArrangement = Arrangement.spacedBy(dpx(if (style == 1) 12 else 18))) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(dpx(14))) {
                 LiveBadge()
                 Text(raw = true, text = c.title + (nowE?.let { "  ·  " + hhmm(it.start) + " – " + hhmm(it.end) } ?: ""),
                     color = Tok.TextMid, fontSize = spx(20), maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
-            Text(raw = true, text = nowE?.title ?: c.title, color = Tok.TextHi, fontSize = spx(68), lineHeight = spx(70),
+            Text(raw = true, text = nowE?.title ?: c.title, color = Tok.TextHi, fontSize = spx(titleSize), lineHeight = spx(titleSize + 2),
                 fontWeight = FontWeight.ExtraBold, letterSpacing = (-1.2).sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
-            nowE?.desc?.takeIf { it.isNotBlank() }?.let {
+            if (showDesc) nowE?.desc?.takeIf { it.isNotBlank() }?.let {
                 Text(raw = true, text = it, color = Tok.TextMid, fontSize = spx(21), lineHeight = spx(30), maxLines = 3, overflow = TextOverflow.Ellipsis)
             }
             if (nowE != null) {

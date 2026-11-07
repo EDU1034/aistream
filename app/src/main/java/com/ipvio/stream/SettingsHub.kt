@@ -457,6 +457,8 @@ private fun GeneralPage(ctx: Context) {
     val shown = SettingsLogic.resolveStartTab(General.startTab, AppSettings.menuOrder.toList(), AppSettings.menuHidden.toList())
     SelectRow("Startseite", tabs[shown], tabs, shown) { General.setStartTab(ctx, it) }
     Hint("Diese Seite öffnet sich beim Start der App. Versteckte Menüpunkte sind nicht wählbar.")
+    SelectRow("Stil des Live-Infopanels", General.LIVE_PANEL_NAMES[General.livePanel], General.LIVE_PANEL_NAMES, General.livePanel) { General.setLivePanel(ctx, it) }
+    Hint("Aussehen der Programm-Infos in Live TV (großer Titel, kompakt oder Glaskarte).")
     ToggleRow("Letzten Sender beim Start abspielen", "Wenn du zuletzt Live TV gesehen hast, läuft dieser Sender direkt nach dem Start.", General.resumeLive) { General.setResumeLive(ctx, it) }
     ToggleRow("Letzten Film / letzte Serie beim Start fortsetzen", "Wenn du zuletzt einen Film oder eine Serie gesehen hast, läuft sie nach dem Start an der gemerkten Stelle weiter (bei einer fertigen Folge mit der nächsten).", General.resumeVod) { General.setResumeVod(ctx, it) }
 

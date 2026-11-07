@@ -273,4 +273,9 @@ Letzter Kanal¦Último canal
 Für diesen Sender gibt es kein Programm.¦Não há programação para este canal.
 Mosaik¦Mosaico
 Größe: Menü · Vollbild: OK · Zurück: schließen¦Tamanho: Menu · Tela cheia: OK · Voltar: fechar
+Kinematisch¦Cinemático
+Glaskarte¦Card de vidro
+Stil des Live-Infopanels¦Estilo do painel ao vivo
+Aussehen der Programm-Infos in Live TV (großer Titel, kompakt oder Glaskarte).¦Aparência das informações do programa na TV ao vivo (título grande, compacto ou card de vidro).
+Startseite¦Tela inicial
 """
