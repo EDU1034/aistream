@@ -81,6 +81,9 @@ object GuidePrefs {
     var zoom by mutableIntStateOf(2)
     var rowSize by mutableIntStateOf(0)
     var hidePast by mutableStateOf(false)
+    /** Modo do guia: 0 = Grade (timeline), 1 = Agora/A seguir, 2 = Dia do canal. */
+    var mode by mutableIntStateOf(0)
+    val MODE_NAMES = listOf("Raster", "Jetzt / Danach", "Sendertag")
     private var inited = false
 
     fun init(c: Context) {
@@ -92,11 +95,12 @@ object GuidePrefs {
         zoom = p.getInt("zoom", 2).coerceIn(0, 2)
         rowSize = p.getInt("row", 0).coerceIn(0, 2)
         hidePast = p.getBoolean("past", false)
+        mode = p.getInt("mode", 0).coerceIn(0, MODE_NAMES.lastIndex)
     }
 
     fun save(c: Context) {
         Profiles.sp(c, "ipvio_guide").edit()
-            .putInt("zoom", zoom).putInt("row", rowSize).putBoolean("past", hidePast).apply()
+            .putInt("zoom", zoom).putInt("row", rowSize).putBoolean("past", hidePast).putInt("mode", mode).apply()
     }
 }
 
@@ -231,8 +235,12 @@ fun Guide(
                                 ) {
                                     Text("TV-Guide – Ansicht", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                                        Text("Modus", color = Color.White, fontSize = 15.sp)
+                                        SmallPill(GuidePrefs.MODE_NAMES[GuidePrefs.mode], Modifier.focusRequester(first)) { GuidePrefs.mode = (GuidePrefs.mode + 1) % GuidePrefs.MODE_NAMES.size; GuidePrefs.save(ctx) }
+                                    }
+                                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                                         Text("Zoom", color = Color.White, fontSize = 15.sp)
-                                        SmallPill(zoomNames[GuidePrefs.zoom], Modifier.focusRequester(first)) { GuidePrefs.zoom = (GuidePrefs.zoom + 1) % 3; GuidePrefs.save(ctx) }
+                                        SmallPill(zoomNames[GuidePrefs.zoom]) { GuidePrefs.zoom = (GuidePrefs.zoom + 1) % 3; GuidePrefs.save(ctx) }
                                     }
                                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                                         Text("Zeilenhöhe", color = Color.White, fontSize = 15.sp)
@@ -266,7 +274,14 @@ fun Guide(
                 }
             }
             Spacer(Modifier.width(12.dp))
-            BoxWithConstraints(Modifier.weight(1f).fillMaxHeight().clip(RoundedCornerShape(DS.RadiusL)).background(Color(0x0AFFFFFF)).padding(horizontal = 8.dp, vertical = 6.dp)) {
+            if (GuidePrefs.mode != 0) GuideAltPane(
+                GuidePrefs.mode, shown, curId, nowSec, focus,
+                onPick = { ch -> val p = onPickIn; if (p != null) p(ch, shown) else onPick(ch) },
+                onArchive = { ch, e -> onArchive(ch, e) },
+                onBackToCats = { runCatching { catReq.requestFocus() } },
+                modifier = Modifier.weight(1f).fillMaxHeight(),
+            )
+            else BoxWithConstraints(Modifier.weight(1f).fillMaxHeight().clip(RoundedCornerShape(DS.RadiusL)).background(Color(0x0AFFFFFF)).padding(horizontal = 8.dp, vertical = 6.dp)) {
                 val vm = ((maxWidth - 208.dp).value / dpm).toInt().coerceAtLeast(40)
                 SideEffect { if (viewMin != vm) viewMin = vm }
                 Column(Modifier.fillMaxSize()) {

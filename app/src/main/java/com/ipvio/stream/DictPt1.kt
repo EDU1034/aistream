@@ -278,4 +278,8 @@ Glaskarte¦Card de vidro
 Stil des Live-Infopanels¦Estilo do painel ao vivo
 Aussehen der Programm-Infos in Live TV (großer Titel, kompakt oder Glaskarte).¦Aparência das informações do programa na TV ao vivo (título grande, compacto ou card de vidro).
 Startseite¦Tela inicial
+Modus¦Modo
+Jetzt / Danach¦Agora / A seguir
+Sendertag¦Dia do canal
+Läuft gerade¦Passando agora
 """
